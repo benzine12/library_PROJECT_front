@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Reports - Book CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS and Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Link to External CSS File -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Additional Styling for Charts */
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+    <nav class="navbar sidebar  d-none d-md-flex bg-dark">
+        <a href="index.html" class="navbar-brand text-light mb-4 d-flex align-items-center">
+          <i class="fas fa-book-open me-2"></i> Book CRM
+        </a>
+        <ul class="nav flex-column w-100">
+          <li class="nav-item mb-2">
+            <a href="index.html" class="nav-link rounded-3 text-light">
+              <i class="fas fa-home me-2"></i> Home
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="customers.html" class="nav-link rounded-3 text-light">
+              <i class="fas fa-user me-2"></i> Customers
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="books.html" class="nav-link rounded-3 text-light">
+              <i class="fas fa-book me-2"></i> Books
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="loans.html" class="nav-link rounded-3 text-light">
+              <i class="fas fa-hand-holding me-2"></i> Loans
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="reports.html" class="nav-link rounded-3 text-light active">
+              <i class="fas fa-chart-line me-2"></i> Reports
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+  <!-- Offcanvas Sidebar for Mobile -->
+  <nav class="navbar navbar-dark bg-dark d-md-none">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <!-- Sidebar Toggle Button -->
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+        aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Navbar Brand -->
+      <a class="navbar-brand mx-auto" href="index.html">
+        <i class="fas fa-book-open"></i> Book CRM
+      </a>
+      <!-- Username and Photo -->
+      <div class="d-flex align-items-center">
+        <span>Hi, David</span>
+        <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="User Image">
+      </div>
+    </div>
+  </nav>
+
+  <!-- Offcanvas Content -->
+  <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasSidebar"
+    aria-labelledby="offcanvasSidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
+        <i class="fas fa-book-open"></i> Book CRM
+      </h5>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas"
+        aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <a href="index.html" class="nav-link">
+        <i class="fas fa-home"></i> Home
+      </a>
+      <a href="customers.html" class="nav-link">
+        <i class="fas fa-user"></i> Customers
+      </a>
+      <a href="books.html" class="nav-link">
+        <i class="fas fa-book"></i> Books
+      </a>
+      <a href="loans.html" class="nav-link">
+        <i class="fas fa-hand-holding"></i> Loans
+      </a>
+      <a href="reports.html" class="nav-link active">
+        <i class="fas fa-chart-line"></i> Reports
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+
+      <!-- Header Row -->
+      <div class="row mb-4">
+        <div class="col-12 d-flex align-items-center">
+          <h2 class="mb-0 me-3">Reports</h2>
+        </div>
+      </div>
+
+      <!-- Alert Container -->
+      <div id="alertContainer"></div> <!-- Container for alert messages -->
+
+      <!-- Toasts Container -->
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Toast for errors -->
+        <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            An error occurred while fetching reports. Please try again.
+          </div>
+        </div>
+      </div>
+      <!-- End of Toasts Container -->
+
+      <!-- Summary Cards with Mathematical Metrics -->
+      <div class="row mb-4">
+        <div class="col-md-4">
+          <div class="card text-center p-4">
+            <div class="card-body">
+              <i class="fas fa-book fa-3x mb-3 text-primary"></i>
+              <h5 class="card-title">Total Books</h5>
+              <p class="card-text"><strong id="totalBooks">Loading...</strong></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center p-4">
+            <div class="card-body">
+              <i class="fas fa-user fa-3x mb-3 text-success"></i>
+              <h5 class="card-title">Total Customers</h5>
+              <p class="card-text"><strong id="totalCustomers">Loading...</strong></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-center p-4">
+            <div class="card-body">
+              <i class="fas fa-hand-holding fa-3x mb-3 text-warning"></i>
+              <h5 class="card-title">Total Loans</h5>
+              <p class="card-text"><strong id="totalLoans">Loading...</strong></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced Mathematical Metrics -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <div class="card p-4">
+            <h5 class="card-title">Average Loan Duration</h5>
+            <p class="card-text"><strong id="averageLoanDuration">Calculating...</strong> days</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-4">
+            <h5 class="card-title">Loan Success Rate</h5>
+            <p class="card-text"><strong id="loanSuccessRate">Calculating...</strong>%</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Charts -->
+      <div class="row">
+        <!-- Books by Type Pie Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Books by Type</h5>
+            <div class="chart-container">
+              <canvas id="booksTypeChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Loans Over Time Line Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Loans Over Time</h5>
+            <div class="chart-container">
+              <canvas id="loansOverTimeChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Customer Demographics Bar Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Customer Age Distribution</h5>
+            <div class="chart-container">
+              <canvas id="customerAgeChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Active vs. Inactive Books Doughnut Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Active vs. Inactive Books</h5>
+            <div class="chart-container">
+              <canvas id="activeBooksChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Active vs. Inactive Customers Doughnut Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Active vs. Inactive Customers</h5>
+            <div class="chart-container">
+              <canvas id="activeCustomersChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Active vs. Closed Loans Doughnut Chart -->
+        <div class="col-md-6 mb-4">
+          <div class="card p-3">
+            <h5 class="card-title text-center">Active vs. Closed Loans</h5>
+            <div class="chart-container">
+              <canvas id="activeLoansChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer py-3 text-center">
+    <div class="container">
+      <span>&copy; 2024 Book CRM</span> |
+      <a href="index.html" class="text-light">Home</a> |
+      <a href="#" class="text-light">About</a> |
+      <a href="#" class="text-light">FAQ</a>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS Script -->
+  <script>
+    const SERVER = 'http://127.0.0.1:5000';
+
+    // Toast elements
+    const errorToastEl = document.getElementById('errorToast');
+    const errorToast = new bootstrap.Toast(errorToastEl, { delay: 5000 });
+
+    // Summary elements
+    const totalBooksElem = document.getElementById('totalBooks');
+    const totalCustomersElem = document.getElementById('totalCustomers');
+    const totalLoansElem = document.getElementById('totalLoans');
+
+    // Advanced Metrics elements
+    const averageLoanDurationElem = document.getElementById('averageLoanDuration');
+    const loanSuccessRateElem = document.getElementById('loanSuccessRate');
+
+    // Chart elements
+    let booksTypeChart, loansOverTimeChart, customerAgeChart, activeBooksChart, activeCustomersChart, activeLoansChart;
+
+    // Function to display alert messages via toast
+    function showAlert(message) {
+      errorToastEl.querySelector('.toast-body').textContent = message;
+      errorToast.show();
+    }
+
+    // Function to fetch all data and render reports
+    const fetchAndRenderReports = async () => {
+      try {
+        // Fetch books, customers, and loans data concurrently
+        const [booksRes, customersRes, loansRes] = await Promise.all([
+          axios.get(`${SERVER}/books`),
+          axios.get(`${SERVER}/customers`),
+          axios.get(`${SERVER}/loans`)
+        ]);
+
+        const books = booksRes.data;
+        const customers = customersRes.data;
+        const loans = loansRes.data;
+
+        // Update summary cards
+        updateSummaryCards(books, customers, loans);
+
+        // Calculate advanced metrics
+        calculateAdvancedMetrics(loans);
+
+        // Render charts
+        renderBooksTypeChart(books);
+        renderLoansOverTimeChart(loans);
+        renderCustomerAgeChart(customers);
+        renderActiveBooksChart(books);
+        renderActiveCustomersChart(customers);
+        renderActiveLoansChart(loans);
+
+      } catch (error) {
+        console.error('Error fetching reports data:', error);
+        showAlert('Failed to fetch reports data. Please try again later.');
+      }
+    };
+
+    // Function to update summary cards
+    const updateSummaryCards = (books, customers, loans) => {
+      const totalBooks = books.length;
+      const activeBooks = books.filter(book => book.is_active).length;
+      const totalCustomers = customers.length;
+      const activeCustomers = customers.filter(customer => customer.is_active).length;
+      const totalLoans = loans.length;
+      const activeLoans = loans.filter(loan => loan.is_active).length;
+
+      totalBooksElem.textContent = `${activeBooks} / ${totalBooks}`;
+      totalCustomersElem.textContent = `${activeCustomers} / ${totalCustomers}`;
+      totalLoansElem.textContent = `${activeLoans} / ${totalLoans}`;
+    };
+
+    // Function to calculate advanced metrics
+    const calculateAdvancedMetrics = (loans) => {
+      let totalDuration = 0;
+      let count = 0;
+      let successfulLoans = 0;
+
+      loans.forEach(loan => {
+        if (loan.Returndate) {
+          const loanDate = new Date(loan.Loandate);
+          const returnDate = new Date(loan.Returndate);
+          const duration = (returnDate - loanDate) / (1000 * 60 * 60 * 24); // Duration in days
+          totalDuration += duration;
+          count++;
+          successfulLoans++;
+        }
+      });
+
+      const averageDuration = count ? (totalDuration / count).toFixed(2) : 0;
+      const loanSuccessRate = loans.length ? ((successfulLoans / loans.length) * 100).toFixed(2) : 0;
+
+      averageLoanDurationElem.textContent = averageDuration;
+      loanSuccessRateElem.textContent = loanSuccessRate;
+    };
+
+    // Function to render Books by Type Pie Chart
+    const renderBooksTypeChart = (books) => {
+      const typeCounts = {};
+
+      books.forEach(book => {
+        const typeLabel = book.type.toString(); // Use the actual type number as a string
+        if (typeCounts[typeLabel]) {
+          typeCounts[typeLabel]++;
+        } else {
+          typeCounts[typeLabel] = 1;
+        }
+      });
+
+      const ctx = document.getElementById('booksTypeChart').getContext('2d');
+      if (booksTypeChart) booksTypeChart.destroy();
+      booksTypeChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(typeCounts), // ['1', '2', '3']
+          datasets: [{
+            data: Object.values(typeCounts),
+            backgroundColor: [
+              '#007bff',
+              '#28a745',
+              '#ffc107'
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    };
+
+    // Function to render Loans Over Time Line Chart
+    const renderLoansOverTimeChart = (loans) => {
+      const loansByMonth = {};
+
+      loans.forEach(loan => {
+        const loanDate = new Date(loan.Loandate);
+        const month = loanDate.toLocaleString('default', { month: 'short', year: 'numeric' });
+        if (loansByMonth[month]) {
+          loansByMonth[month]++;
+        } else {
+          loansByMonth[month] = 1;
+        }
+      });
+
+      // Sort months chronologically
+      const sortedMonths = Object.keys(loansByMonth).sort((a, b) => {
+        const dateA = new Date(a);
+        const dateB = new Date(b);
+        return dateA - dateB;
+      });
+
+      const sortedCounts = sortedMonths.map(month => loansByMonth[month]);
+
+      const ctx = document.getElementById('loansOverTimeChart').getContext('2d');
+      if (loansOverTimeChart) loansOverTimeChart.destroy();
+      loansOverTimeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: sortedMonths,
+          datasets: [{
+            label: 'Number of Loans',
+            data: sortedCounts,
+            backgroundColor: '#17a2b8',
+            borderColor: '#17a2b8',
+            fill: false,
+            tension: 0.1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              precision: 0
+            }
+          }
+        }
+      });
+    };
+
+    // Function to render Customer Age Distribution Bar Chart
+    const renderCustomerAgeChart = (customers) => {
+      const ageGroups = {
+        '18-25': 0,
+        '26-35': 0,
+        '36-45': 0,
+        '46-60': 0,
+        '60+': 0
+      };
+
+      customers.forEach(customer => {
+        const age = customer.age;
+        if (age >= 18 && age <= 25) ageGroups['18-25']++;
+        else if (age >= 26 && age <= 35) ageGroups['26-35']++;
+        else if (age >= 36 && age <= 45) ageGroups['36-45']++;
+        else if (age >= 46 && age <= 60) ageGroups['46-60']++;
+        else if (age > 60) ageGroups['60+']++;
+      });
+
+      const ctx = document.getElementById('customerAgeChart').getContext('2d');
+      if (customerAgeChart) customerAgeChart.destroy();
+      customerAgeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(ageGroups),
+          datasets: [{
+            label: 'Number of Customers',
+            data: Object.values(ageGroups),
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              precision: 0
+            }
+          }
+        }
+      });
+    };
+
+    // Function to render Active vs. Inactive Books Doughnut Chart
+    const renderActiveBooksChart = (books) => {
+      const activeBooks = books.filter(book => book.is_active).length;
+      const inactiveBooks = books.length - activeBooks;
+
+      const ctx = document.getElementById('activeBooksChart').getContext('2d');
+      if (activeBooksChart) activeBooksChart.destroy();
+      activeBooksChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Active Books', 'Inactive Books'],
+          datasets: [{
+            data: [activeBooks, inactiveBooks],
+            backgroundColor: ['#28a745', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    };
+
+    // Function to render Active vs. Inactive Customers Doughnut Chart
+    const renderActiveCustomersChart = (customers) => {
+      const activeCustomers = customers.filter(customer => customer.is_active).length;
+      const inactiveCustomers = customers.length - activeCustomers;
+
+      const ctx = document.getElementById('activeCustomersChart').getContext('2d');
+      if (activeCustomersChart) activeCustomersChart.destroy();
+      activeCustomersChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Active Customers', 'Inactive Customers'],
+          datasets: [{
+            data: [activeCustomers, inactiveCustomers],
+            backgroundColor: ['#28a745', '#dc3545']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    };
+
+    // Function to render Active vs. Closed Loans Doughnut Chart
+    const renderActiveLoansChart = (loans) => {
+      const activeLoans = loans.filter(loan => loan.is_active).length;
+      const closedLoans = loans.length - activeLoans;
+
+      const ctx = document.getElementById('activeLoansChart').getContext('2d');
+      if (activeLoansChart) activeLoansChart.destroy();
+      activeLoansChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Active Loans', 'Closed Loans'],
+          datasets: [{
+            data: [activeLoans, closedLoans],
+            backgroundColor: ['#ffc107', '#6c757d']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    };
+
+    // Removed the getBookTypeLabel function since we're using actual type numbers
+
+    // Initial fetch and render
+    fetchAndRenderReports();
+
+  </script>
+
+</body>
+
+</html>
