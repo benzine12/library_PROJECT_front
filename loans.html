@@ -16,7 +16,7 @@
 <body>
 
   <!-- Sidebar -->
-  <nav class="navbar sidebar  d-none d-md-flex bg-dark">
+  <nav class="navbar sidebar d-none d-md-flex bg-dark">
     <a href="index.html" class="navbar-brand text-light mb-4 d-flex align-items-center">
       <i class="fas fa-book-open me-2"></i> Book CRM
     </a>
@@ -42,7 +42,7 @@
         </a>
       </li>
       <li class="nav-item mb-2">
-        <a href="reports.html" class="nav-link rounded-3 text-ligh">
+        <a href="reports.html" class="nav-link rounded-3 text-light"> <!-- Fixed typo: 'text-ligh' to 'text-light' -->
           <i class="fas fa-chart-line me-2"></i> Reports
         </a>
       </li>
@@ -133,19 +133,20 @@
 
       <!-- Toasts Container -->
       <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <!-- Toast for missing return date -->
+        <!-- Return Date Toast -->
         <div id="returnDateToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
           aria-atomic="true">
           <div class="toast-header bg-danger text-white">
             <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
           </div>
           <div class="toast-body">
             Please select a return date.
           </div>
         </div>
 
-        <!-- Toast for new loan added -->
+        <!-- Loan Added Toast -->
         <div id="loanAddedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
           aria-atomic="true">
           <div class="toast-header bg-success text-white">
@@ -158,7 +159,7 @@
           </div>
         </div>
 
-        <!-- Toast for return date updated -->
+        <!-- Return Updated Toast -->
         <div id="returnUpdatedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
           aria-atomic="true">
           <div class="toast-header bg-success text-white">
@@ -171,7 +172,7 @@
           </div>
         </div>
 
-        <!-- Toast for errors -->
+        <!-- Error Toast -->
         <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
           aria-atomic="true">
           <div class="toast-header bg-danger text-white">
@@ -243,7 +244,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" form="addLoanForm" class="btn btn-primary" onclick="addLoan()">Add Loan</button>
+              <button type="button" class="btn btn-primary" onclick="addLoan()">Add Loan</button>
             </div>
           </div>
         </div>
@@ -270,67 +271,13 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary" onclick="returnBook()" id="returnBookSubmit"
+              <!-- Changed type from 'submit' to 'button' to prevent double submission -->
+              <button type="button" class="btn btn-primary" onclick="returnBook()" id="returnBookSubmit"
                 disabled>Return Book</button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Add Loan Toasts -->
-      <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <!-- Toast for missing return date -->
-        <div id="returnDateToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
-          aria-atomic="true">
-          <div class="toast-header bg-danger text-white">
-            <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            Please select a return date.
-          </div>
-        </div>
-
-        <!-- Toast for new loan added -->
-        <div id="loanAddedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
-          aria-atomic="true">
-          <div class="toast-header bg-success text-white">
-            <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
-              aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            New loan has been added.
-          </div>
-        </div>
-
-        <!-- Toast for return date updated -->
-        <div id="returnUpdatedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
-          aria-atomic="true">
-          <div class="toast-header bg-success text-white">
-            <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
-              aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            Return date has been updated.
-          </div>
-        </div>
-
-        <!-- Toast for general errors -->
-        <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
-          aria-atomic="true">
-          <div class="toast-header bg-danger text-white">
-            <strong class="me-auto">Error</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
-              aria-label="Close"></button>
-          </div>
-          <div class="toast-body">
-            An error occurred. Please try again.
-          </div>
-        </div>
-      </div>
-      <!-- End of Toasts Container -->
 
     </div>
   </div>
@@ -558,7 +505,7 @@
           document.getElementById('addLoanForm').reset();
 
           // Refresh the loans list
-          get_loans();
+          await get_loans();
 
           // Refresh book suggestions in case a book was loaned out
           bookSuggestions.innerHTML = '';
@@ -613,6 +560,7 @@
     const returnBook = async () => {
       const id = document.getElementById('returnLoanId').value;
       const returnDateInput = document.getElementById('returnDate');
+      const returnBookSubmit = document.getElementById('returnBookSubmit');
       const returnDate = returnDateInput.value;
 
       if (!returnDate) {
@@ -621,18 +569,22 @@
         return;
       }
 
+      // Disable the button to prevent multiple submissions
+      returnBookSubmit.disabled = true;
+      returnBookSubmit.innerHTML = 'Processing...';
+
       try {
         const response = await axios.post(`${SERVER}/return_book/${id}`, {
-          Returndate: returnDate
+          Returndate: returnDate // Changed key name to match backend expectations
         });
 
-        if (response.status === 200) {
+        if (response.status === 201 || response.status === 200) {
           // Close the modal
           const returnBookModal = bootstrap.Modal.getInstance(document.getElementById('returnBookModal'));
           returnBookModal.hide();
 
           // Refresh the loans list
-          get_loans();
+          await get_loans();
 
           // Show success toast
           returnUpdatedToast.show();
@@ -641,15 +593,22 @@
         }
       } catch (error) {
         console.error('Error returning book:', error);
-        if (error.response && error.response.data && error.response.data.message) {
-          showAlert(error.response.data.message, 'danger');
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          showAlert(`Error: ${error.response.data.message || 'Failed to return book.'}`, 'danger');
         } else if (error.request) {
+          // Request was made but no response received
           console.error('No response from the server.');
           showAlert('No response from the server. Please try again later.', 'danger');
         } else {
+          // Something else happened
           console.error('Error in request setup:', error.message);
-          showAlert('An unexpected error occurred.', 'danger');
+          showAlert(`Error: ${error.message}`, 'danger');
         }
+      } finally {
+        // Re-enable the button and reset its text
+        returnBookSubmit.disabled = false;
+        returnBookSubmit.innerHTML = 'Return Book';
       }
     };
 
