@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>books - Book CRM</title>
+  <title>Books - Book CRM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Bootstrap CSS and Font Awesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -11,11 +12,12 @@
   <!-- Link to External CSS File -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
   <!-- Sidebar -->
   <nav class="navbar sidebar flex-column d-none d-md-flex">
-    <a href="index.html" class="navbar-brand rounded-3">
+    <a href="index.html" class="navbar-brand rounded-3 mb-4">
       <i class="fas fa-book-open"></i> Book CRM
     </a>
     <a href="index.html" class="nav-link rounded-3">
@@ -39,7 +41,8 @@
   <nav class="navbar navbar-dark bg-dark d-md-none">
     <div class="container-fluid d-flex align-items-center justify-content-between">
       <!-- Sidebar Toggle Button -->
-      <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+        aria-controls="offcanvasSidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Navbar Brand -->
@@ -55,21 +58,23 @@
   </nav>
 
   <!-- Offcanvas Content -->
-  <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+  <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasSidebar"
+    aria-labelledby="offcanvasSidebarLabel">
     <div class="offcanvas-header">
       <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
         <i class="fas fa-book-open"></i> Book CRM
       </h5>
-      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas"
+        aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       <a href="index.html" class="nav-link">
         <i class="fas fa-home"></i> Home
       </a>
-      <a href="books.html" class="nav-link active">
-        <i class="fas fa-user"></i> books
+      <a href="customers.html" class="nav-link">
+        <i class="fas fa-user"></i> Customers
       </a>
-      <a href="books.html" class="nav-link">
+      <a href="books.html" class="nav-link active">
         <i class="fas fa-book"></i> Books
       </a>
       <a href="loans.html" class="nav-link">
@@ -89,27 +94,74 @@
       <div class="row mb-4">
         <div class="col-12 col-md-6 d-flex align-items-center mb-2 mb-md-0">
           <h2 class="mb-0 me-3">Books</h2>
-          <!-- Add book Button for Desktop -->
-          <button class="btn btn-primary d-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#addbookModal">
-            <i class="fas fa-plus"></i> Add book
+          <!-- Add Book Button for Desktop -->
+          <button class="btn btn-primary d-none d-md-inline-block" data-bs-toggle="modal" data-bs-target="#addBookModal">
+            <i class="fas fa-plus"></i> Add Book
           </button>
         </div>
         <!-- Search Bar -->
         <div class="col-12 col-md-6">
           <div class="d-flex justify-content-md-end">
-            <form class="d-flex me-2">
-              <input class="form-control me-2" type="search" placeholder="Search books" aria-label="Search">
-              <button class="btn btn-outline-light" type="submit">Search</button>
-            </form>
-            <!-- Add book Button for Mobile -->
-            <button class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#addbookModal">
+            <div class="d-flex me-2">
+              <input class="form-control me-2" type="number" min="1" id="searchInput" placeholder="Search by Book ID" aria-label="Search">
+              <button class="btn btn-outline-light" type="button" onclick="searchBook()">Search</button>
+              <button class="btn btn-outline-secondary ms-2" type="button" onclick="clearSearch()">Clear</button>
+            </div>
+            <!-- Add Book Button for Mobile -->
+            <button class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#addBookModal">
               <i class="fas fa-plus"></i>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- books Table -->
+      <!-- Alert Container -->
+      <div id="alertContainer"></div> <!-- Container for alert messages -->
+
+      <!-- Toasts Container -->
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Toast for new book added -->
+        <div id="bookAddedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            New book has been added.
+          </div>
+        </div>
+
+        <!-- Toast for book status updated -->
+        <div id="bookStatusUpdatedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            Book status has been updated.
+          </div>
+        </div>
+
+        <!-- Toast for errors -->
+        <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            An error occurred. Please try again.
+          </div>
+        </div>
+      </div>
+      <!-- End of Toasts Container -->
+
+      <!-- Books Table -->
       <div class="table-responsive">
         <table class="table table-dark table-striped align-middle">
           <thead>
@@ -117,34 +169,35 @@
               <th>ID</th>
               <th>Name</th>
               <th>Author</th>
-              <th>year published</th>
-              <th>type</th>
+              <th>Year Published</th>
+              <th>Type</th>
               <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="booksTableBody">
-            <!-- book rows will be populated here via JavaScript -->
+            <!-- Book rows will be populated here via JavaScript -->
           </tbody>
         </table>
       </div>
 
-      <!-- Add book Modal -->
-      <div class="modal fade" id="addbookModal" tabindex="-1" aria-labelledby="addbookModalLabel" aria-hidden="true">
+      <!-- Add Book Modal -->
+      <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content bg-dark text-light">
             <div class="modal-header">
-              <h5 class="modal-title" id="addbookModalLabel">Add New book</h5>
+              <h5 class="modal-title" id="addBookModalLabel">Add New Book</h5>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div id="addbookForm">
+              <form id="addBookForm">
                 <div class="mb-3">
                   <label for="bookName" class="form-label">Name</label>
                   <input type="text" class="form-control" id="bookName" name="name" required>
                 </div>
                 <div class="mb-3">
                   <label for="bookAuthor" class="form-label">Author</label>
-                  <input type="text" class="form-control" id="bookAuthor" name="age" required>
+                  <input type="text" class="form-control" id="bookAuthor" name="author" required>
                 </div>
                 <div class="mb-3">
                   <label for="publishedYear" class="form-label">Year Published</label>
@@ -152,7 +205,7 @@
                     type="number"
                     class="form-control"
                     id="publishedYear"
-                    name="publishedYear"
+                    name="year_published"
                     min="1900"
                     max="2099"
                     step="1"
@@ -169,17 +222,17 @@
                     <option value="3">3 - Express Plan (2 Days)</option>
                   </select>
                 </div>
-              </div>
+              </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" form="addbookForm" class="btn btn-primary" onclick="send_data()">Add book</button>
+              <button type="submit" form="addBookForm" class="btn btn-primary" onclick="addBook()">Add Book</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Edit book Modal (Optional) -->
+      <!-- Edit Book Modal (Optional) -->
       <!-- You can create a similar modal for editing book details -->
 
     </div>
@@ -198,29 +251,110 @@
   <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const SERVER = 'http://127.0.0.1:5000'
-    const get_books = async () => {
-      let response = await axios(SERVER + "/books")
-      response.data.forEach(element => {
-        const isChecked = element.is_active ? 'checked' : '';
-        booksTableBody.innerHTML += `
-            <tr>
-              <td>${element['id']}</td>
-              <td>${element['name']}</td>
-              <td>${element['author']}</td>
-              <td>${element['year_published']}</td>
-              <td>${element['type']}</td>
-              <td>${element.is_active ? 'Active' : 'Inactive'}</td>
-              <td><input type="checkbox" class="form-check-input toggle-status-checkbox" data-id="${element.id}" ${isChecked}></td>
-            </tr>
-            `;
-      });
-      const toggleCheckboxes = document.querySelectorAll('.toggle-status-checkbox');
-        toggleCheckboxes.forEach(checkbox => {
-          checkbox.addEventListener('change', togglebookStatus);
-        });
+    const SERVER = 'http://127.0.0.1:5000';
+    const booksTableBody = document.getElementById('booksTableBody');
+    const alertContainer = document.getElementById('alertContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    // Toast elements
+    const bookAddedToastEl = document.getElementById('bookAddedToast');
+    const bookAddedToast = new bootstrap.Toast(bookAddedToastEl, { delay: 5000 });
+
+    const bookStatusUpdatedToastEl = document.getElementById('bookStatusUpdatedToast');
+    const bookStatusUpdatedToast = new bootstrap.Toast(bookStatusUpdatedToastEl, { delay: 5000 });
+
+    const errorToastEl = document.getElementById('errorToast');
+    const errorToast = new bootstrap.Toast(errorToastEl, { delay: 5000 });
+
+    let booksData = []; // To store all books for easy access
+
+    // Function to display alert messages
+    const showAlert = (message, type = 'danger') => {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      `;
+      // Automatically dismiss the alert after 5 seconds
+      setTimeout(() => {
+        const alert = bootstrap.Alert.getOrCreateInstance(alertContainer.querySelector('.alert'));
+        if (alert) {
+          alert.close();
+        }
+      }, 5000);
     }
-    const togglebookStatus = async (event) => {
+
+    // Function to fetch and display all books
+    const get_books = async () => {
+      try {
+        const response = await axios.get(`${SERVER}/books`);
+        booksData = response.data; // Store fetched books
+        displayBooks(response.data);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+        showAlert('Failed to fetch books. Please try again later.', 'danger');
+      }
+    }
+
+    // Function to display books in the table
+    const displayBooks = (books) => {
+      booksTableBody.innerHTML = '';
+      if (books.length === 0) {
+        booksTableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="text-center">No books found.</td>
+          </tr>
+        `;
+        return;
+      }
+      books.forEach(element => {
+        const statusBadge = element.is_active 
+          ? `<span class="badge bg-success">Active</span>` 
+          : `<span class="badge bg-secondary">Inactive</span>`;
+        booksTableBody.innerHTML += `
+          <tr>
+            <td>${element['id']}</td>
+            <td>${element['name']}</td>
+            <td>${element['author']}</td>
+            <td>${element['year_published']}</td>
+            <td>${getBookTypeLabel(element['type'])}</td>
+            <td>${statusBadge}</td>
+            <td class="text-center">
+              <input type="checkbox" class="form-check-input toggle-status-checkbox" data-id="${element.id}" ${element.is_active ? 'checked' : ''}>
+            </td>
+          </tr>
+        `;
+      });
+      // Attach event listeners to the new checkboxes
+      attachToggleEventListeners();
+    }
+
+    // Function to convert book type number to label
+    const getBookTypeLabel = (type) => {
+      switch (type) {
+        case "1":
+          return "Standard Plan (10 Days)";
+        case "2":
+          return "Quick Plan (5 Days)";
+        case "3":
+          return "Express Plan (2 Days)";
+        default:
+          return "Unknown";
+      }
+    }
+
+    // Function to attach event listeners to toggle-status-checkboxes
+    const attachToggleEventListeners = () => {
+      const toggleCheckboxes = document.querySelectorAll('.toggle-status-checkbox');
+      toggleCheckboxes.forEach(checkbox => {
+        checkbox.removeEventListener('change', toggleBookStatus); // Prevent multiple bindings
+        checkbox.addEventListener('change', toggleBookStatus);
+      });
+    }
+
+    // Function to toggle book status
+    const toggleBookStatus = async (event) => {
       const checkbox = event.target;
       const bookId = checkbox.getAttribute('data-id');
       const newStatus = checkbox.checked;
@@ -238,41 +372,128 @@
         const response = await axios.put(`${SERVER}/books/${bookId}/toggle-status`);
 
         if (response.status === 200) {
-          // Optionally, update the status text in the table
+          // Update the status badge in the table
           const row = checkbox.closest('tr');
           const statusCell = row.children[5];
-          statusCell.textContent = newStatus ? 'Active' : 'Inactive';
-          alert('book status updated successfully.');
+          statusCell.innerHTML = newStatus 
+            ? `<span class="badge bg-success">Active</span>` 
+            : `<span class="badge bg-secondary">Inactive</span>`;
+          bookStatusUpdatedToast.show(); // Show toast when status is updated
         } else {
           throw new Error('Failed to update status.');
         }
       } catch (error) {
         console.error('Error toggling book status:', error);
-        alert('Failed to update book status. Please try again.');
+        errorToast.show(); // Show error toast
 
         // Revert the checkbox state in case of error
         checkbox.checked = !newStatus;
       }
     }
-    const send_data = async () => {
-      const name = document.getElementById('bookName');
-      const author = document.getElementById('bookAuthor');
-      const publishedYear = document.getElementById('publishedYear');
-      const type = document.getElementById('bookType');
-      let response = axios.post(SERVER + "/add_book",
-  {
-    "name": name.value,
-    "author": author.value,
-    "year_published": publishedYear.value,
-    "type": type.value
-  }
-)
-      console.log(response);
-    }
-    get_books()
-  </script>
-  <!-- Your Custom JS Script -->
-  <!-- <script src="your-script.js"></script> -->
 
+    // Function to add a new book
+    const addBook = async () => {
+      const name = document.getElementById('bookName').value.trim();
+      const author = document.getElementById('bookAuthor').value.trim();
+      const publishedYear = document.getElementById('publishedYear').value;
+      const type = document.getElementById('bookType').value;
+
+      // Basic validation
+      if (!name || !author || !publishedYear || !type) {
+        showAlert('Please fill in all the fields.', 'warning');
+        return;
+      }
+
+      try {
+        const response = await axios.post(`${SERVER}/add_book`, {
+          "name": name,
+          "author": author,
+          "year_published": publishedYear,
+          "type": type
+        });
+
+        if (response.status === 201) {
+          // Close the modal
+          const addBookModal = bootstrap.Modal.getInstance(document.getElementById('addBookModal'));
+          addBookModal.hide();
+
+          // Reset the form
+          document.getElementById('addBookForm').reset();
+
+          // Refresh the books list
+          get_books();
+
+          // Show success toast
+          bookAddedToast.show();
+        } else {
+          throw new Error('Failed to add book.');
+        }
+      } catch (error) {
+        console.error('Error adding book:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+          showAlert(error.response.data.error, 'danger');
+        } else {
+          showAlert('Failed to add book. Please try again.', 'danger');
+        }
+      }
+    }
+
+    // Function to search for a book by ID
+    const searchBook = async () => {
+      const query = searchInput.value.trim();
+
+      if (query === '') {
+        showAlert('Please enter a Book ID to search.', 'warning');
+        return;
+      }
+
+      const bookId = parseInt(query, 10);
+
+      if (isNaN(bookId) || bookId <= 0) {
+        showAlert('Please enter a valid positive integer for Book ID.', 'warning');
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${SERVER}/books/${bookId}`);
+
+        if (response.status === 200) {
+          displayBooks([response.data]); // Display only the found book
+          showAlert(`Book with ID ${bookId} found.`, 'success');
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          showAlert(`No book found with ID ${bookId}.`, 'warning');
+          booksTableBody.innerHTML = `
+            <tr>
+              <td colspan="7" class="text-center">No books found.</td>
+            </tr>
+          `;
+        } else {
+          console.error('Error searching book:', error);
+          showAlert('An error occurred while searching for the book.', 'danger');
+        }
+      }
+    }
+
+    // Function to clear search and display all books
+    const clearSearch = () => {
+      searchInput.value = '';
+      get_books();
+      alertContainer.innerHTML = '';
+    }
+
+    // Event listener to handle Enter key for search
+    searchInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchBook();
+      }
+    });
+
+    // Initial fetch of books
+    get_books();
+  </script>
 </body>
+
 </html>

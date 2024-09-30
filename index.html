@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Link to External CSS File -->
   <link rel="stylesheet" href="css/styles.css">
+
 </head>
 
 <body>
@@ -89,16 +90,39 @@
   <div class="content">
     <div class="container-fluid">
       <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search books, customers" aria-label="Search">
+        <div class="col-md-8 search-container">
+          <form class="d-flex position-relative">
+            <input class="form-control me-2" id="search-input" type="search" placeholder="Search books, customers" aria-label="Search" autocomplete="off">
             <button class="btn btn-outline-light" type="submit">Search</button>
+            <!-- Autocomplete Dropdown -->
+            <div class="autocomplete-dropdown" id="autocomplete-dropdown"></div>
           </form>
         </div>
         <!-- Username and Photo for Desktop -->
         <div class="col-md-4 text-end d-none d-md-block">
           <span>Hi, David</span>
           <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="User Image">
+        </div>
+      </div>
+
+      <!-- Search Results Section -->
+      <div class="container mt-4" id="search-results" style="display: none;">
+        <h3>Search Results</h3>
+
+        <!-- Books Results -->
+        <div id="books-results" class="mb-4">
+          <h4>Books</h4>
+          <div class="list-group" id="books-list">
+            <!-- Books will be dynamically inserted here -->
+          </div>
+        </div>
+
+        <!-- Customers Results -->
+        <div id="customers-results">
+          <h4>Customers</h4>
+          <div class="list-group" id="customers-list">
+            <!-- Customers will be dynamically inserted here -->
+          </div>
         </div>
       </div>
 
@@ -214,6 +238,69 @@
         .catch(error => console.error('Error fetching books:', error));
     };
 
+    // Function to handle search
+    const handleSearch = (event) => {
+      event.preventDefault(); // Prevent the default form submission
+
+      const searchInput = document.querySelector('#search-input').value.trim();
+
+      if (!searchInput) {
+        alert('Please enter a search term.');
+        return;
+      }
+
+      axios.get(`${SERVER}/search`, { params: { q: searchInput } })
+        .then(res => {
+          const { books, customers } = res.data;
+
+          // Get the search results container
+          const searchResults = document.getElementById('search-results');
+          const booksList = document.getElementById('books-list');
+          const customersList = document.getElementById('customers-list');
+
+          // Clear previous results
+          booksList.innerHTML = '';
+          customersList.innerHTML = '';
+
+          // Populate books results
+          if (books.length > 0) {
+            books.forEach(book => {
+              const bookItem = document.createElement('a');
+              bookItem.href = `books.html#${book.id}`; // Link to book details page
+              bookItem.className = 'list-group-item list-group-item-action';
+              bookItem.innerHTML = `<strong>${book.name}</strong> by ${book.author} (${book.year_published})`;
+              booksList.appendChild(bookItem);
+            });
+          } else {
+            booksList.innerHTML = '<p class="text-muted">No books found.</p>';
+          }
+
+          // Populate customers results
+          if (customers.length > 0) {
+            customers.forEach(customer => {
+              const customerItem = document.createElement('a');
+              customerItem.href = `customers.html#${customer.id}`; // Link to customer details page
+              customerItem.className = 'list-group-item list-group-item-action';
+              customerItem.innerHTML = `<strong>${customer.name}</strong> (${customer.email})`;
+              customerItem.style.cursor = 'pointer';
+              customersList.appendChild(customerItem);
+            });
+          } else {
+            customersList.innerHTML = '<p class="text-muted">No customers found.</p>';
+          }
+
+          // Show the search results container
+          searchResults.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error performing search:', error);
+          alert('An error occurred while searching. Please try again.');
+        });
+    };
+
+    // Attach the search handler to the form
+    document.querySelector('form.d-flex').addEventListener('submit', handleSearch);
+
     // Function to periodically refresh data
     const startAutoRefresh = () => {
       // Refresh every 5 seconds (5000 milliseconds)
@@ -230,6 +317,153 @@
     get_books();
     startAutoRefresh();
 
+    // **Autocomplete Functionality**
+
+    const searchInputElem = document.getElementById('search-input');
+    const autocompleteDropdown = document.getElementById('autocomplete-dropdown');
+    let activeSuggestionIndex = -1; // To keep track of keyboard navigation
+
+    // Debounce function to limit the rate of API calls
+    const debounce = (func, delay) => {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+      };
+    };
+
+    // Function to fetch and display autocomplete suggestions
+    const fetchSuggestions = debounce(() => {
+      const query = searchInputElem.value.trim();
+      if (!query) {
+        autocompleteDropdown.style.display = 'none';
+        autocompleteDropdown.innerHTML = '';
+        return;
+      }
+
+      axios.get(`${SERVER}/search`, { params: { q: query } })
+        .then(res => {
+          const { books, customers } = res.data;
+          const suggestions = [];
+
+          // Prepare book suggestions
+          books.forEach(book => {
+            suggestions.push({
+              type: 'Book',
+              id: book.id,
+              name: book.name,
+              author: book.author,
+              display: `<strong>${book.name}</strong> by ${book.author} (${book.year_published})`
+            });
+          });
+
+          // Prepare customer suggestions
+          customers.forEach(customer => {
+            suggestions.push({
+              type: 'Customer',
+              id: customer.id,
+              name: customer.name,
+              email: customer.email,
+              display: `<strong>${customer.name}</strong> (${customer.email})`
+            });
+          });
+
+          // If no suggestions, hide the dropdown
+          if (suggestions.length === 0) {
+            autocompleteDropdown.style.display = 'none';
+            autocompleteDropdown.innerHTML = '';
+            return;
+          }
+
+          // Build the dropdown items
+          autocompleteDropdown.innerHTML = '';
+          suggestions.forEach((item, index) => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'autocomplete-item';
+            suggestionItem.innerHTML = item.display;
+            suggestionItem.dataset.type = item.type;
+            suggestionItem.dataset.id = item.id;
+            suggestionItem.dataset.index = index;
+
+            // Click event to navigate to the respective page
+            suggestionItem.addEventListener('click', (e) => {
+              e.stopPropagation(); // Prevent form submission
+              if (item.type === 'Book') {
+                window.location.href = `books.html#${item.id}`;
+              } else if (item.type === 'Customer') {
+                window.location.href = `customers.html#${item.id}`;
+              }
+            });
+
+            autocompleteDropdown.appendChild(suggestionItem);
+          });
+
+          // Reset active suggestion index
+          activeSuggestionIndex = -1;
+
+          // Show the dropdown
+          autocompleteDropdown.style.display = 'block';
+        })
+        .catch(error => {
+          console.error('Error fetching suggestions:', error);
+          autocompleteDropdown.style.display = 'none';
+          autocompleteDropdown.innerHTML = '';
+        });
+    }, 300); // 300ms debounce delay
+
+    // Event listener for input changes
+    searchInputElem.addEventListener('input', fetchSuggestions);
+
+    // Event listener for keyboard navigation
+    searchInputElem.addEventListener('keydown', (e) => {
+      const items = autocompleteDropdown.getElementsByClassName('autocomplete-item');
+      if (autocompleteDropdown.style.display === 'none' || items.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        // Move down the suggestion list
+        activeSuggestionIndex++;
+        if (activeSuggestionIndex >= items.length) activeSuggestionIndex = 0;
+        setActiveSuggestion(items);
+        e.preventDefault();
+      } else if (e.key === 'ArrowUp') {
+        // Move up the suggestion list
+        activeSuggestionIndex--;
+        if (activeSuggestionIndex < 0) activeSuggestionIndex = items.length - 1;
+        setActiveSuggestion(items);
+        e.preventDefault();
+      } else if (e.key === 'Enter') {
+        // Trigger click on the active suggestion
+        if (activeSuggestionIndex > -1 && items[activeSuggestionIndex]) {
+          items[activeSuggestionIndex].click();
+          e.preventDefault();
+        }
+      } else if (e.key === 'Escape') {
+        // Hide the dropdown
+        autocompleteDropdown.style.display = 'none';
+      }
+    });
+
+    // Helper function to highlight the active suggestion
+    const setActiveSuggestion = (items) => {
+      for (let i = 0; i < items.length; i++) {
+        items[i].classList.remove('active');
+      }
+      if (activeSuggestionIndex >= 0 && activeSuggestionIndex < items.length) {
+        items[activeSuggestionIndex].classList.add('active');
+        // Ensure the active item is visible within the dropdown
+        items[activeSuggestionIndex].scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest'
+        });
+      }
+    };
+
+    // Event listener to close the dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!document.querySelector('.search-container').contains(e.target)) {
+        autocompleteDropdown.style.display = 'none';
+      }
+    });
   </script>
 
 </body>

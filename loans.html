@@ -5,16 +5,19 @@
   <meta charset="UTF-8">
   <title>Loans - Book CRM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS and Font Awesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Link to External CSS File -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
+  <!-- Sidebar -->
   <nav class="navbar sidebar flex-column d-none d-md-flex">
-    <a href="index.html" class="navbar-brand">
+    <a href="index.html" class="navbar-brand rounded-3 mb-4">
       <i class="fas fa-book-open"></i> Book CRM
     </a>
     <a href="index.html" class="nav-link rounded-3">
@@ -34,15 +37,19 @@
     </a>
   </nav>
 
+  <!-- Offcanvas Sidebar for Mobile -->
   <nav class="navbar navbar-dark bg-dark d-md-none">
     <div class="container-fluid d-flex align-items-center justify-content-between">
+      <!-- Sidebar Toggle Button -->
       <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
         aria-controls="offcanvasSidebar">
         <span class="navbar-toggler-icon"></span>
       </button>
+      <!-- Navbar Brand -->
       <a class="navbar-brand mx-auto" href="index.html">
         <i class="fas fa-book-open"></i> Book CRM
       </a>
+      <!-- Username and Photo -->
       <div class="d-flex align-items-center">
         <span>Hi, David</span>
         <img src="https://via.placeholder.com/40" class="rounded-circle ms-2" alt="User Image">
@@ -50,6 +57,7 @@
     </div>
   </nav>
 
+  <!-- Offcanvas Content -->
   <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasSidebar"
     aria-labelledby="offcanvasSidebarLabel">
     <div class="offcanvas-header">
@@ -72,26 +80,35 @@
       <a href="loans.html" class="nav-link active">
         <i class="fas fa-hand-holding"></i> Loans
       </a>
+      <a href="reports.html" class="nav-link">
+        <i class="fas fa-chart-line"></i> Reports
+      </a>
     </div>
   </div>
 
+  <!-- Main Content -->
   <div class="content">
     <div class="container-fluid">
 
+      <!-- Header Row -->
       <div class="row mb-4">
         <div class="col-12 col-md-6 d-flex align-items-center mb-2 mb-md-0">
           <h2 class="mb-0 me-3">Loans</h2>
+          <!-- Add Loan Button for Desktop -->
           <button class="btn btn-primary d-none d-md-inline-block" data-bs-toggle="modal"
-          data-bs-target="#addLoanModal" id="addLoanButton">
-          <i class="fas fa-plus"></i> Add Loan
-        </button>
+            data-bs-target="#addLoanModal" id="addLoanButton">
+            <i class="fas fa-plus"></i> Add Loan
+          </button>
         </div>
+        <!-- Search Bar -->
         <div class="col-12 col-md-6">
           <div class="d-flex justify-content-md-end">
             <div class="d-flex me-2">
-              <input class="form-control me-2" type="search" placeholder="Search loans" aria-label="Search">
-              <button class="btn btn-outline-light" type="submit">Search</button>
+              <input class="form-control me-2" type="number" min="1" id="searchInput" placeholder="Search by Loan ID" aria-label="Search">
+              <button class="btn btn-outline-light" type="button" onclick="searchLoan()">Search</button>
+              <button class="btn btn-outline-secondary ms-2" type="button" onclick="clearSearch()">Clear</button>
             </div>
+            <!-- Add Loan Button for Mobile -->
             <button class="btn btn-primary d-md-none" data-bs-toggle="modal" data-bs-target="#addLoanModal">
               <i class="fas fa-plus"></i>
             </button>
@@ -99,89 +116,8 @@
         </div>
       </div>
 
-      <div class="table-responsive">
-        <table class="table table-dark table-striped align-middle">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Customer Name</th>
-              <th>Book Title</th>
-              <th>Loan Date</th>
-              <th>Return Date</th>
-              <th class="text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="loansTableBody">
-          </tbody>
-        </table>
-      </div>
-
-      <div class="modal fade" id="addLoanModal" tabindex="-1" aria-labelledby="addLoanModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-              <h5 class="modal-title" id="addLoanModalLabel">Add New Loan</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div id="addLoanForm">
-                <div class="mb-3">
-                  <label for="loanCustomer" class="form-label">Customer</label>
-                  <input type="text" class="form-control" id="loanCustomer" list="customerSuggestions"
-                    autocomplete="off" required>
-                  <input type="hidden" id="selectedCustomerId">
-
-                  <datalist id="customerSuggestions">
-                  </datalist>
-                </div>
-                <div class="mb-3">
-                  <label for="loanBook" class="form-label">Book</label>
-                  <input type="text" class="form-control" id="loanBook" name="BookID" list="bookSuggestions"
-                    autocomplete="off" required>
-                  <datalist id="bookSuggestions">
-                  </datalist>
-                </div>
-                <div class="mb-3">
-                  <label for="loanDate" class="form-label">Loan Date</label>
-                  <input type="date" class="form-control" id="loanDate" name="Loandate" required>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" onclick="send_data()">Add Loan</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal fade" id="returnBookModal" tabindex="-1" aria-labelledby="returnBookModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-              <h5 class="modal-title" id="returnBookModalLabel">Return Book</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <div id="returnBookForm">
-                <input type="hidden" id="returnLoanId">
-                <div class="mb-3">
-                  <label for="returnDate" class="form-label">Return Date</label>
-                  <input type="date" class="form-control" id="returnDate" required>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="button" class="btn btn-primary" onclick="return_book()" id="returnBookSubmit"
-                disabled>Return Book</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Alert Container -->
+      <div id="alertContainer"></div> <!-- Container for alert messages -->
 
       <!-- Toasts Container -->
       <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -202,7 +138,8 @@
           aria-atomic="true">
           <div class="toast-header bg-success text-white">
             <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
           </div>
           <div class="toast-body">
             New loan has been added.
@@ -214,10 +151,169 @@
           aria-atomic="true">
           <div class="toast-header bg-success text-white">
             <strong class="me-auto">Success</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
           </div>
           <div class="toast-body">
             Return date has been updated.
+          </div>
+        </div>
+
+        <!-- Toast for errors -->
+        <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            An error occurred. Please try again.
+          </div>
+        </div>
+      </div>
+      <!-- End of Toasts Container -->
+
+      <!-- Loans Table -->
+      <div class="table-responsive">
+        <table class="table table-dark table-striped align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Customer Name</th>
+              <th>Book Title</th>
+              <th>Loan Date</th>
+              <th>Return Date</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="loansTableBody">
+            <!-- Loan rows will be populated here via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Loan Modal -->
+      <div class="modal fade" id="addLoanModal" tabindex="-1" aria-labelledby="addLoanModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+              <h5 class="modal-title" id="addLoanModalLabel">Add New Loan</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="addLoanForm">
+                <div class="mb-3">
+                  <label for="loanCustomer" class="form-label">Customer</label>
+                  <input type="text" class="form-control" id="loanCustomer" list="customerSuggestions"
+                    autocomplete="off" required>
+                  <input type="hidden" id="selectedCustomerId">
+
+                  <datalist id="customerSuggestions">
+                  </datalist>
+                </div>
+                <div class="mb-3">
+                  <label for="loanBook" class="form-label">Book</label>
+                  <input type="text" class="form-control" id="loanBook" name="BookID" list="bookSuggestions"
+                    autocomplete="off" required>
+                  <input type="hidden" id="selectedBookId">
+
+                  <datalist id="bookSuggestions">
+                  </datalist>
+                </div>
+                <div class="mb-3">
+                  <label for="loanDate" class="form-label">Loan Date</label>
+                  <input type="date" class="form-control" id="loanDate" name="Loandate" required>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" form="addLoanForm" class="btn btn-primary" onclick="addLoan()">Add Loan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Return Book Modal -->
+      <div class="modal fade" id="returnBookModal" tabindex="-1" aria-labelledby="returnBookModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+              <h5 class="modal-title" id="returnBookModalLabel">Return Book</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="returnBookForm">
+                <input type="hidden" id="returnLoanId">
+                <div class="mb-3">
+                  <label for="returnDate" class="form-label">Return Date</label>
+                  <input type="date" class="form-control" id="returnDate" required>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary" onclick="returnBook()" id="returnBookSubmit"
+                disabled>Return Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Loan Toasts -->
+      <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <!-- Toast for missing return date -->
+        <div id="returnDateToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            Please select a return date.
+          </div>
+        </div>
+
+        <!-- Toast for new loan added -->
+        <div id="loanAddedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            New loan has been added.
+          </div>
+        </div>
+
+        <!-- Toast for return date updated -->
+        <div id="returnUpdatedToast" class="toast bg-success text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Success</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            Return date has been updated.
+          </div>
+        </div>
+
+        <!-- Toast for general errors -->
+        <div id="errorToast" class="toast bg-danger text-white" role="alert" aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header bg-danger text-white">
+            <strong class="me-auto">Error</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"
+              aria-label="Close"></button>
+          </div>
+          <div class="toast-body">
+            An error occurred. Please try again.
           </div>
         </div>
       </div>
@@ -226,6 +322,7 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="footer py-3 text-center">
     <div class="container">
       <span>&copy; 2024 Book CRM</span> |
@@ -235,30 +332,80 @@
     </div>
   </footer>
 
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const SERVER = 'http://127.0.0.1:5000';
 
     // Toast elements
     const returnDateToastEl = document.getElementById('returnDateToast');
-    const returnDateToast = new bootstrap.Toast(returnDateToastEl, { delay: 15000 });
+    const returnDateToast = new bootstrap.Toast(returnDateToastEl, { delay: 5000 });
 
     const loanAddedToastEl = document.getElementById('loanAddedToast');
-    const loanAddedToast = new bootstrap.Toast(loanAddedToastEl, { delay: 15000 });
+    const loanAddedToast = new bootstrap.Toast(loanAddedToastEl, { delay: 5000 });
 
     const returnUpdatedToastEl = document.getElementById('returnUpdatedToast');
-    const returnUpdatedToast = new bootstrap.Toast(returnUpdatedToastEl, { delay: 15000 });
+    const returnUpdatedToast = new bootstrap.Toast(returnUpdatedToastEl, { delay: 5000 });
 
+    const errorToastEl = document.getElementById('errorToast');
+    const errorToast = new bootstrap.Toast(errorToastEl, { delay: 5000 });
+
+    const loansTableBody = document.getElementById('loansTableBody');
+    const bookSuggestions = document.getElementById('bookSuggestions');
+    const customerSuggestions = document.getElementById('customerSuggestions');
+    const alertContainer = document.getElementById('alertContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    let activeBooks = []; // To keep track of active book names
+    let activeCustomers = []; // To keep track of active customer names
+
+    // Function to display alert messages
+    function showAlert(message, type = 'danger') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      `;
+      // Automatically dismiss the alert after 5 seconds
+      setTimeout(() => {
+        const alert = bootstrap.Alert.getOrCreateInstance(alertContainer.querySelector('.alert'));
+        if (alert) {
+          alert.close();
+        }
+      }, 5000);
+    }
+
+    // Function to fetch and display all loans
     const get_loans = async () => {
-      let response = await axios(SERVER + "/loans");
+      try {
+        let response = await axios.get(`${SERVER}/loans`);
 
-      const sortedLoans = response.data.sort((a, b) => {
-        return b.is_active - a.is_active;
-      });
+        const sortedLoans = response.data.sort((a, b) => {
+          return b.is_active - a.is_active;
+        });
 
+        displayLoans(sortedLoans);
+      } catch (error) {
+        console.error('Error fetching loans:', error);
+        showAlert('Failed to fetch loans. Please try again later.', 'danger');
+      }
+    };
+
+    // Function to display loans in the table
+    function displayLoans(loans) {
       loansTableBody.innerHTML = '';
 
-      sortedLoans.forEach(element => {
+      if (loans.length === 0) {
+        loansTableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center">No loans found.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      loans.forEach(element => {
         loansTableBody.innerHTML += `
           <tr>
             <td>${element['id']}</td>
@@ -276,71 +423,108 @@
           </tr>
         `;
       });
+    }
+
+    // Function to populate the book suggestions dropdown with available books
+    const dropdown_book = async () => {
+      try {
+        let books_res = await axios.get(`${SERVER}/books`);
+        let loans_res = await axios.get(`${SERVER}/loans`);
+
+        // Extract IDs of books that are currently loaned out (active loans)
+        const loanedBookIds = loans_res.data
+          .filter(loan => loan.is_active)
+          .map(loan => loan.BookID); // Assuming 'BookID' is the identifier in loan
+
+        books_res.data.forEach(element => {
+          if (element.is_active && !loanedBookIds.includes(element.id)) { // Only include active and not loaned books
+            activeBooks.push(element.name); // Store active book names for validation
+            bookSuggestions.innerHTML += `
+              <option value="${element.name}"></option>
+            `;
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching books or loans:', error);
+        showAlert('Failed to fetch books. Please try again later.', 'danger');
+      }
     };
-    let activeBooks = []; // To keep track of active book names
 
-const dropdown_book = async () => {
-  let books_res = await axios(SERVER + "/books");
-  books_res.data.forEach(element => {
-    if (element.is_active) { // Only include active books
-      activeBooks.push(element.name); // Store active book names for validation
-      bookSuggestions.innerHTML += `
-        <option value="${element.name}"></option>
-      `;
-    }
-  });
-};
+    // Function to populate the customer suggestions dropdown with active customers
+    const dropdown_custom = async () => {
+      try {
+        let customers_res = await axios.get(`${SERVER}/customers`);
+        customers_res.data.forEach(element => {
+          if (element.is_active) { // Only include active customers
+            activeCustomers.push(element.name); // Store active customer names for validation
+            customerSuggestions.innerHTML += `
+              <option value="${element.name}"></option>
+            `;
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+        showAlert('Failed to fetch customers. Please try again later.', 'danger');
+      }
+    };
 
-let activeCustomers = []; // To keep track of active customer names
+    // Function to send data and add a new loan
+    const addLoan = async () => {
+      const CustomerName = document.getElementById('loanCustomer').value.trim();
+      const BookName = document.getElementById('loanBook').value.trim();
+      const loanDate = document.getElementById('loanDate').value;
 
-const dropdown_custom = async () => {
-  let customers_res = await axios(SERVER + "/customers");
-  customers_res.data.forEach(element => {
-    if (element.is_active) { // Only include active customers
-      activeCustomers.push(element.name); // Store active customer names for validation
-      customerSuggestions.innerHTML += `
-        <option value="${element.name}"></option>
-      `;
-    }
-  });
-};
+      // Validate that the entered customer is active
+      if (!activeCustomers.includes(CustomerName)) {
+        showAlert("Selected customer is inactive or does not exist.", 'warning');
+        return;
+      }
 
-const send_data = async () => {
-  const CustomerName = document.getElementById('loanCustomer');
-  const BookName = document.getElementById('loanBook');
-  const loanDate = document.getElementById('loanDate');
+      // Validate that the entered book is active
+      if (!activeBooks.includes(BookName)) {
+        showAlert("Selected book is inactive or does not exist.", 'warning');
+        return;
+      }
 
-  // Validate that the entered customer is active
-  if (!activeCustomers.includes(CustomerName.value)) {
-    alert("Selected customer is inactive or does not exist.");
-    return;
-  }
+      try {
+        const response = await axios.post(`${SERVER}/loan_book`, {
+          "CustomerName": CustomerName,
+          "BookName": BookName,
+          "Loandate": loanDate,
+        });
 
-  // Validate that the entered book is active
-  if (!activeBooks.includes(BookName.value)) {
-    alert("Selected book is inactive or does not exist.");
-    return;
-  }
+        if (response.status === 201 || response.status === 200) {
+          // Close the modal
+          const addLoanModal = bootstrap.Modal.getInstance(document.getElementById('addLoanModal'));
+          addLoanModal.hide();
 
-  try {
-    await axios.post(SERVER + "/loan_book", {
-      "CustomerName": CustomerName.value,
-      "BookName": BookName.value,
-      "Loandate": loanDate.value,
-    });
-    addLoanModal = bootstrap.Modal.getInstance(document.getElementById('addLoanModal'));
-    addLoanModal.hide();
-    get_loans();
-    loanAddedToast.show(); // Show toast when loan is added
-  } catch (error) {
-    if (error.response && error.response.data && error.response.data.error) {
-      // Display the error message returned from the backend
-      alert(error.response.data.error);
-    } else {
-      console.error('Error adding loan:', error);
-    }
-  }
-};
+          // Reset the form
+          document.getElementById('addLoanForm').reset();
+
+          // Refresh the loans list
+          get_loans();
+
+          // Refresh book suggestions in case a book was loaned out
+          bookSuggestions.innerHTML = '';
+          activeBooks = [];
+          await dropdown_book();
+
+          // Show success toast
+          loanAddedToast.show();
+        } else {
+          throw new Error('Failed to add loan.');
+        }
+      } catch (error) {
+        console.error('Error adding loan:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+          // Display the error message returned from the backend
+          showAlert(error.response.data.error, 'danger');
+        } else {
+          showAlert('An unexpected error occurred while adding the loan.', 'danger');
+        }
+      }
+    };
+
     // Function to open the Return Book modal
     function openReturnModal(id) {
       document.getElementById('returnLoanId').value = id;
@@ -351,20 +535,26 @@ const send_data = async () => {
       returnDateInput.value = '';
       returnBookSubmit.disabled = true;
 
+      // Remove any existing event listeners to prevent multiple bindings
+      const newReturnDateInput = returnDateInput.cloneNode(true);
+      returnDateInput.parentNode.replaceChild(newReturnDateInput, returnDateInput);
+
       // Add event listener to enable submit button when return date is selected
-      returnDateInput.addEventListener('input', function () {
-        if (returnDateInput.value) {
+      newReturnDateInput.addEventListener('input', function () {
+        if (newReturnDateInput.value) {
           returnBookSubmit.disabled = false;
         } else {
           returnBookSubmit.disabled = true;
         }
       });
 
+      // Show the modal
       returnBookModal = new bootstrap.Modal(document.getElementById('returnBookModal'));
       returnBookModal.show();
     }
 
-    const return_book = async () => {
+    // Function to handle returning a book
+    const returnBook = async () => {
       const id = document.getElementById('returnLoanId').value;
       const returnDateInput = document.getElementById('returnDate');
       const returnDate = returnDateInput.value;
@@ -379,40 +569,103 @@ const send_data = async () => {
         const response = await axios.post(`${SERVER}/return_book/${id}`, {
           Returndate: returnDate
         });
-        returnBookModal = bootstrap.Modal.getInstance(document.getElementById('returnBookModal'));
-        returnBookModal.hide();
-        get_loans();
-        returnUpdatedToast.show(); // Show toast when return date is updated
+
+        if (response.status === 200) {
+          // Close the modal
+          const returnBookModal = bootstrap.Modal.getInstance(document.getElementById('returnBookModal'));
+          returnBookModal.hide();
+
+          // Refresh the loans list
+          get_loans();
+
+          // Show success toast
+          returnUpdatedToast.show();
+        } else {
+          throw new Error('Failed to return book.');
+        }
       } catch (error) {
-        if (error.response) {
-          console.error('Error:', error.response.data.message);
+        console.error('Error returning book:', error);
+        if (error.response && error.response.data && error.response.data.message) {
+          showAlert(error.response.data.message, 'danger');
         } else if (error.request) {
           console.error('No response from the server.');
+          showAlert('No response from the server. Please try again later.', 'danger');
         } else {
           console.error('Error in request setup:', error.message);
+          showAlert('An unexpected error occurred.', 'danger');
         }
       }
     };
 
-    const checkIfCanAddLoan = () => {
-  const addLoanButton = document.getElementById('addLoanButton');
-  if (activeBooks.length === 0 || activeCustomers.length === 0) {
-    addLoanButton.disabled = true;
-    addLoanButton.title = 'Cannot add loan: No active books or customers available.';
-  } else {
-    addLoanButton.disabled = false;
-    addLoanButton.title = '';
-  }
-};
+    // Function to search for a loan by ID
+    const searchLoan = async () => {
+      const query = searchInput.value.trim();
 
-// Call this function after fetching active books and customers
-(async function() {
-  await dropdown_book();
-  await dropdown_custom();
-  checkIfCanAddLoan(); // Check if we can enable the "Add Loan" button
-  await get_loans();
-})();
+      if (query === '') {
+        showAlert('Please enter a Loan ID to search.', 'warning');
+        return;
+      }
+
+      const loanId = parseInt(query, 10);
+
+      if (isNaN(loanId) || loanId <= 0) {
+        showAlert('Please enter a valid positive integer for Loan ID.', 'warning');
+        return;
+      }
+
+      try {
+        let response = await axios.get(`${SERVER}/loans/${loanId}`);
+
+        if (response.status === 200) {
+          displayLoans([response.data]); // Display only the found loan
+          showAlert(`Loan with ID ${loanId} found.`, 'success');
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          showAlert(`No loan found with ID ${loanId}.`, 'warning');
+          loansTableBody.innerHTML = `
+            <tr>
+              <td colspan="6" class="text-center">No loans found.</td>
+            </tr>
+          `;
+        } else {
+          console.error('Error searching loan:', error);
+          showAlert('An error occurred while searching for the loan.', 'danger');
+        }
+      }
+    };
+
+    // Function to clear search and display all loans
+    const clearSearch = () => {
+      searchInput.value = '';
+      get_loans();
+      alertContainer.innerHTML = '';
+    };
+
+    // Event listener to handle Enter key for search
+    searchInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        searchLoan();
+      }
+    });
+
+    // Initial setup: populate dropdowns and fetch loans
+    (async function () {
+      await dropdown_custom();
+      await dropdown_book();
+      await get_loans();
+    })();
+
   </script>
+  <style>
+    /* Optional: Ensure the suggestions dropdown aligns properly */
+    #customerSuggestions, #bookSuggestions {
+      width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
 
 </body>
 
