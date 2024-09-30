@@ -196,6 +196,7 @@
               <th>Book Title</th>
               <th>Loan Date</th>
               <th>Return Date</th>
+              <th>Time Remaining</th> <!-- New Column Header -->
               <th class="text-center">Actions</th>
             </tr>
           </thead>
@@ -370,6 +371,14 @@
 
     let activeBooks = []; // To keep track of active book names
     let activeCustomers = []; // To keep track of active customer names
+    const bookTypeMap = {}; // Mapping of Book Title to Book Type
+
+    // Loan type to duration mapping (in days)
+    const loanDurationMap = {
+      'Type 1': 10,
+      'Type 2': 5,
+      'Type 3': 2
+    };
 
     // Function to display alert messages
     function showAlert(message, type = 'danger') {
@@ -411,20 +420,53 @@
       if (loans.length === 0) {
         loansTableBody.innerHTML = `
           <tr>
-            <td colspan="6" class="text-center">No loans found.</td>
+            <td colspan="7" class="text-center">No loans found.</td>
           </tr>
         `;
         return;
       }
 
       loans.forEach(element => {
+        // Get the book type from the mapping
+        const bookType = bookTypeMap[element['BookTitle']] || 'Type 1'; // Default to Type 1 if not found
+        const loanDuration = loanDurationMap[bookType] || 10; // Default to 10 days
+
+        // Calculate due date
+        const loanDate = new Date(element['Loandate']);
+        const dueDate = new Date(loanDate);
+        dueDate.setDate(dueDate.getDate() + loanDuration);
+
+        // Calculate remaining time
+        const today = new Date();
+        const timeDiff = dueDate - today;
+        const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+        let timeRemainingText = '';
+        let rowClass = '';
+
+        if (element['is_active']) {
+          if (dayDiff > 0) {
+            timeRemainingText = `${dayDiff} day(s) remaining`;
+          } else if (dayDiff === 0) {
+            timeRemainingText = `Due today`;
+          } else {
+            timeRemainingText = `Overdue by ${Math.abs(dayDiff)} day(s)`;
+            rowClass = 'table-danger'; // Highlight overdue loans
+          }
+        } else if (element['Returndate']) {
+          timeRemainingText = `Returned on ${element['Returndate']}`;
+        } else {
+          timeRemainingText = 'N/A';
+        }
+
         loansTableBody.innerHTML += `
-          <tr>
+          <tr class="${rowClass}">
             <td>${element['id']}</td>
             <td>${element['CustomerName']}</td>
             <td>${element['BookTitle']}</td>
             <td>${element['Loandate']}</td>
             <td>${element['Returndate'] || ''}</td>
+            <td>${timeRemainingText}</td> <!-- New Column Data -->
             <td class="text-center">
               ${element.is_active ? `
                 <button class="btn btn-success btn-sm" onclick="openReturnModal(${element.id})">
@@ -454,6 +496,8 @@
             bookSuggestions.innerHTML += `
               <option value="${element.name}"></option>
             `;
+            // Populate the bookTypeMap
+            bookTypeMap[element.name] = element.type;
           }
         });
       } catch (error) {
@@ -637,7 +681,7 @@
           showAlert(`No loan found with ID ${loanId}.`, 'warning');
           loansTableBody.innerHTML = `
             <tr>
-              <td colspan="6" class="text-center">No loans found.</td>
+              <td colspan="7" class="text-center">No loans found.</td>
             </tr>
           `;
         } else {
@@ -670,14 +714,6 @@
     })();
 
   </script>
-  <style>
-    /* Optional: Ensure the suggestions dropdown aligns properly */
-    #customerSuggestions, #bookSuggestions {
-      width: 100%;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-  </style>
 
 </body>
 

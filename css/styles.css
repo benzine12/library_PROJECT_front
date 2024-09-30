@@ -166,3 +166,8 @@ object-fit: cover;
 .autocomplete-dropdown::-webkit-scrollbar-track {
   background-color: #2c2c2c;
 }
+#customerSuggestions, #bookSuggestions {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
