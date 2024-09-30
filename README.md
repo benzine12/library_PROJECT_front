@@ -40,8 +40,6 @@ Book CRM is a web-based application designed to manage books, customers, loans, 
    └── main.js              # JavaScript logic for client-side interactions (fetching data, handling modals)
 📁 img/
    └── (images used in the project)
-📁 templates/
-   └── (HTML files for different views)
 📄 index.html               # Main dashboard (homepage)
 📄 books.html               # Book management view
 📄 customers.html           # Customer management view
