@@ -171,3 +171,6 @@ object-fit: cover;
   max-height: 200px;
   overflow-y: auto;
 }
+.content {
+  padding-bottom: 80px; /* Adjust this value to ensure content doesn't overlap with the footer */
+}
