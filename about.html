@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>About - Book CRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS and Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <nav class="navbar sidebar  d-none d-md-flex bg-dark">
+    <a href="index.html" class="navbar-brand text-light mb-4 d-flex align-items-center">
+      <i class="fas fa-book-open me-2"></i> Book CRM
+    </a>
+    <ul class="nav flex-column w-100">
+      <li class="nav-item mb-2">
+        <a href="index.html" class="nav-link rounded-3 text-light">
+          <i class="fas fa-home me-2"></i> Home
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="customers.html" class="nav-link rounded-3 text-light">
+          <i class="fas fa-user me-2"></i> Customers
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="books.html" class="nav-link rounded-3 text-light">
+          <i class="fas fa-book me-2"></i> Books
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="loans.html" class="nav-link rounded-3 text-light">
+          <i class="fas fa-hand-holding me-2"></i> Loans
+        </a>
+      </li>
+      <li class="nav-item mb-2">
+        <a href="reports.html" class="nav-link rounded-3 text-light">
+          <i class="fas fa-chart-line me-2"></i> Reports
+        </a>
+      </li>
+      </li>
+    </ul>
+  </nav>
+
+
+  <!-- Offcanvas Sidebar for Mobile -->
+  <nav class="navbar navbar-dark bg-dark d-md-none">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <!-- Sidebar Toggle Button -->
+      <button class="navbar-toggler me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar"
+        aria-controls="offcanvasSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Navbar Brand -->
+      <a class="navbar-brand mx-auto" href="index.html">
+        <i class="fas fa-book-open"></i> Book CRM
+      </a>
+      <!-- Username and Photo -->
+      <div class="d-flex align-items-center">
+        <span>Hi, David</span>
+        <img src="images/boy-2.png" class="rounded-circle ms-2" alt="User Image">
+      </div>
+    </div>
+  </nav>
+
+  <!-- Offcanvas Content -->
+  <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasSidebar"
+    aria-labelledby="offcanvasSidebarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasSidebarLabel">
+        <i class="fas fa-book-open"></i> Book CRM
+      </h5>
+      <button type="button" class="btn-close text-reset btn-close-white" data-bs-dismiss="offcanvas"
+        aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <a href="index.html" class="nav-link active">
+        <i class="fas fa-home"></i> Home
+      </a>
+      <a href="customers.html" class="nav-link">
+        <i class="fas fa-user"></i> Customers
+      </a>
+      <a href="books.html" class="nav-link">
+        <i class="fas fa-book"></i> Books
+      </a>
+      <a href="loans.html" class="nav-link">
+        <i class="fas fa-hand-holding"></i> Loans
+      </a>
+      <a href="reports.html" class="nav-link">
+        <i class="fas fa-chart-line"></i> Reports
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+
+      <h2 class="mb-4">About This Project</h2>
+
+      <div class="card p-4">
+        <h5 class="card-title">Project Description</h5>
+        <p class="card-text">
+          Book CRM is a comprehensive library management system designed to keep track of books, customers, and loans.
+          This project was built to facilitate easy management of library operations by enabling seamless book tracking, customer management, and loan records.
+        </p>
+      </div>
+
+      <div class="card p-4 mt-4">
+        <h5 class="card-title">Technologies Used</h5>
+        <ul class="card-text">
+          <li><strong>Frontend:</strong> Bootstrap 5, FontAwesome for icons, HTML5, and CSS3</li>
+          <li><strong>Backend:</strong> Flask (Python) and SQLAlchemy ORM</li>
+          <li><strong>Database:</strong> SQLite</li>
+          <li><strong>APIs:</strong> Flask RESTful APIs</li>
+        </ul>
+      </div>
+
+      <div class="card p-4 mt-4">
+        <h5 class="card-title">Author</h5>
+        <p class="card-text">
+          This project was created by Didi, a software developer specializing in web applications. If you have any questions or would like to collaborate on future projects, feel free to reach out.
+        </p>
+        <p><strong>Email:</strong> contact via github page</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer py-3 text-center">
+    <div class="container">
+      <span>&copy; 2024 Book CRM</span> |
+      <a href="index.html" class="text-light">Home</a> |
+      <a href="about.html" class="text-light">About</a> |
+      <a href="faq.html" class="text-light">FAQ</a>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
