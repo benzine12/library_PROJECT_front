@@ -2,15 +2,6 @@
 
 Book CRM is a web-based application designed to manage books, customers, loans, and reports. The app is built using HTML, Bootstrap, and JavaScript, and it uses Axios to communicate with the backend API. This project aims to provide an easy-to-use interface for managing a book collection, customer database, and loan history.
 
-## Table of Contents
-
-- [Features](#features)
-- [Technologies](#technologies)
-- [Project Structure](#project-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Endpoints](#api-endpoints)
-
 ## Features
 
 - **Book Management:** View and manage a collection of books. Add new books, update book information, and toggle their availability status.
