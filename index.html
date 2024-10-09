@@ -252,7 +252,7 @@
 
     // Function to handle search
     const handleSearch = (event) => {
-      event.preventDefault(); // Prevent the default form submission
+      event.preventDefault();
 
       const searchInput = document.querySelector('#search-input').value.trim();
 
@@ -278,7 +278,7 @@
           if (books.length > 0) {
             books.forEach(book => {
               const bookItem = document.createElement('a');
-              bookItem.href = `books.html#${book.id}`; // Link to book details page
+              bookItem.href = `books.html#${book.id}`;
               bookItem.className = 'list-group-item list-group-item-action';
               bookItem.innerHTML = `<strong>${book.name}</strong> by ${book.author} (${book.year_published})`;
               booksList.appendChild(bookItem);
@@ -291,7 +291,7 @@
           if (customers.length > 0) {
             customers.forEach(customer => {
               const customerItem = document.createElement('a');
-              customerItem.href = `customers.html#${customer.id}`; // Link to customer details page
+              customerItem.href = `customers.html#${customer.id}`;
               customerItem.className = 'list-group-item list-group-item-action';
               customerItem.innerHTML = `<strong>${customer.name}</strong> (${customer.email})`;
               customerItem.style.cursor = 'pointer';
@@ -328,8 +328,6 @@
     get_loans();
     get_books();
     startAutoRefresh();
-
-    // **Autocomplete Functionality**
 
     const searchInputElem = document.getElementById('search-input');
     const autocompleteDropdown = document.getElementById('autocomplete-dropdown');

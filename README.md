@@ -30,19 +30,3 @@ Book CRM is a web-based application designed to manage books, customers, loans, 
   - Chart.js for data visualization
 
 - **Backend:** The app is integrated with a Flask-based API (not included in this repository). Axios is used to interact with the backend endpoints for fetching and modifying data.
-
-## Project Structure
-
-```plaintext
-📁 css/
-   └── styles.css           # Custom CSS for additional styling
-📁 js/
-   └── main.js              # JavaScript logic for client-side interactions (fetching data, handling modals)
-📁 img/
-   └── (images used in the project)
-📄 index.html               # Main dashboard (homepage)
-📄 books.html               # Book management view
-📄 customers.html           # Customer management view
-📄 loans.html               # Loan management view
-📄 reports.html             # Reports view with charts
-📄 README.md                # Project documentation
